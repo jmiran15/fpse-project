@@ -1,0 +1,9 @@
+(rule
+  (target project.zip)
+  (deps 
+    src/dune
+    tests/tests.ml
+    tests/dune
+  )
+  (action
+    (run zip -R project.zip %{deps})))

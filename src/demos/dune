@@ -1,0 +1,20 @@
+(executables
+  (names torch)
+  (libraries
+    torch
+    torch.vision)
+  (modules torch))
+
+(executables
+  (names postgre)
+  (libraries
+    postgresql)
+(modules postgre))
+
+
+
+(executables
+  (names aws)
+  (libraries
+    postgresql)
+(modules aws-s3))

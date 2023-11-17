@@ -1,1 +1,1 @@
-# fpse-project
+# FPSE project
