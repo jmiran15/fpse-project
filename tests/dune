@@ -2,5 +2,4 @@
   (name tests)
   (libraries
     core
-    ounit2
-    submission))
+    ounit2))

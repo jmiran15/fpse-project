@@ -1,5 +1,35 @@
-(library
-  (name submission)
-  (libraries
-    core))
+; (executable
+;   (name fpse_project)
+;   (libraries core core_unix torch torch.vision postgresql dream cohttp-lwt-unix lwt)
+;   (modes native)
+;   (modules_without_implementation embedding image)
+;   (modules (:standard \ database neural_style_transfer server)))
 
+(library
+  (name image)
+  (modules image)
+  (modules_without_implementation image)
+  (libraries embedding))
+
+(library
+  (name embedding)
+  (modules embedding)
+  (modules_without_implementation embedding))
+
+(library
+  (name database)
+  (modules database)
+  (modules_without_implementation database)
+  (libraries core core_unix postgresql image embedding))
+
+(library
+  (name neural_style_transfer)
+  (modules neural_style_transfer)
+  (modules_without_implementation neural_style_transfer)
+  (libraries core core_unix torch torch.vision))
+
+(library
+  (name server)
+  (modules server)
+  (modules_without_implementation server)
+  (libraries core core_unix dream cohttp-lwt-unix lwt))
