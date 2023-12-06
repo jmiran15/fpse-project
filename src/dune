@@ -13,8 +13,7 @@
 
 (library
   (name embedding)
-  (modules embedding)
-  (modules_without_implementation embedding))
+  (modules embedding))
 
 (library
   (name database)
@@ -33,3 +32,31 @@
   (modules server)
   (modules_without_implementation server)
   (libraries core core_unix dream cohttp-lwt-unix lwt))
+
+(executable
+  (name testing_embeddings)
+  (modules testing_embeddings)
+  (libraries
+  core 
+  core_unix.filename_unix
+  core_unix.command_unix
+  cohttp-lwt-unix 
+  cohttp
+  lwt
+  yojson)
+  (preprocess (pps ppx_let bisect_ppx)))
+
+  (executable
+  (name style_dataset_utils)
+  (modules style_dataset_utils)
+  (libraries
+  core 
+  core_unix.filename_unix
+  core_unix.command_unix
+  cohttp-lwt-unix 
+  cohttp
+  lwt
+  yojson
+  csv
+  embedding)
+  (preprocess (pps ppx_let bisect_ppx)))
