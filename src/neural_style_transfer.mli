@@ -1,6 +1,6 @@
-(* Module for performing neural style transfer on images. *)
+(*Module for performing neural style transfer on images.
 
-(** Weight assigned to the style in the final image. *)
+* Weight assigned to the style in the final image. *)
 val style_weight : float
 
 (** Learning rate for the optimization process. *)
