@@ -263,5 +263,6 @@ let run ?(ckpt=50) ?(init=true)
   let x_star = !x' in
   convert_arr_to_img (x_star |> unpack_arr) output_img
 
+  (* still testing this implementation; might have to regenerate weights or create new model in torch*)
   let () = 
   run ~ckpt:50 ~src:"/home/ooludip1/Fpse/project/fpse-project/tests/london.jpg" ~style:"/home/ooludip1/Fpse/project/fpse-project/tests/style-starry.jpg" ~dst:"/home/ooludip1/Fpse/project/fpse-project/tests/output_imgtest.png" 250.
