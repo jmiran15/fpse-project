@@ -1,4 +1,4 @@
-(*Module for performing neural style transfer on images.
+(* (*Module for performing neural style transfer on images.
 
 * Weight assigned to the style in the final image. *)
 val style_weight : float
@@ -16,4 +16,4 @@ val style_indexes : int list
 val content_indexes : int list
 
 (** Applies the neural style transfer algorithm on a content image using a style image. *)
-val apply_style_transfer : style_img:string -> content_img:string -> filename:string -> unit
+val apply_style_transfer : style_img:string -> content_img:string -> filename:string -> unit *)

@@ -23,10 +23,14 @@
   (libraries core core_unix postgresql image embedding))
 
 (library
-  (name neural_style_transfer)
-  (modules neural_style_transfer)
-  (modules_without_implementation neural_style_transfer)
-  (libraries core core_unix torch torch.vision))
+  (name image_utils)
+  (modules image_utils)
+  (libraries owl))
+
+(executable
+ (name neural_style_transfer)
+ (modules neural_style_transfer)
+ (libraries owl image_utils))
 
 (library
   (name server)
