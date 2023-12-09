@@ -77,9 +77,6 @@ let reformat_csv input_path output_path =
   let rows = Csv.load input_path in
   let processed_rows = List.map rows ~f:process_row in
   Csv.save output_path processed_rows
-
-
-(* upsert the images and labels to S3, given images folder path and csv path to corresponding labels *)
   
 
 (* Command line interface setup *)
@@ -94,5 +91,3 @@ let command =
 
 (* Run the command *)
 let () = Command_unix.run command
-
-

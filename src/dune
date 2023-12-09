@@ -16,12 +16,6 @@
   (modules embedding))
 
 (library
-  (name database)
-  (modules database)
-  (modules_without_implementation database)
-  (libraries core core_unix postgresql image embedding))
-
-(library
   (name neural_style_transfer)
   (modules neural_style_transfer)
   (modules_without_implementation neural_style_transfer)
@@ -33,18 +27,17 @@
   (modules_without_implementation server)
   (libraries core core_unix dream cohttp-lwt-unix lwt))
 
+
+
+
 (executable
-  (name testing_embeddings)
-  (modules testing_embeddings)
-  (libraries
-  core 
-  core_unix.filename_unix
-  core_unix.command_unix
-  cohttp-lwt-unix 
-  cohttp
-  lwt
-  yojson)
-  (preprocess (pps ppx_let bisect_ppx)))
+  (name neural_style)
+  (modules neural_style)
+  (libraries base torch torch.vision stdio))
+
+
+
+
 
   (executable
   (name style_dataset_utils)
@@ -60,3 +53,37 @@
   csv
   embedding)
   (preprocess (pps ppx_let bisect_ppx)))
+
+
+
+   (executable
+  (name content_dataset_utils)
+  (modules content_dataset_utils)
+  (libraries
+  core 
+  core_unix.filename_unix
+  core_unix.command_unix
+  cohttp-lwt-unix 
+  cohttp
+  lwt
+  yojson
+  csv
+  embedding)
+  (preprocess (pps ppx_let)))
+
+(executables
+  (names database)
+  (modules database)
+  (libraries 
+  postgresql 
+  csv 
+  embedding 
+  base64
+  core 
+  core_unix.filename_unix
+  core_unix.command_unix
+  cohttp-lwt-unix 
+  cohttp
+  lwt
+  yojson)
+  (preprocess (pps ppx_let)))
