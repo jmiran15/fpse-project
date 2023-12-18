@@ -1,51 +1,11 @@
 open Core
-open Lwt
-open Cohttp
-open Cohttp_lwt_unix
+
+(* dune exec ./style_dataset_utils.exe ./data/style/style_labels.csv ./data/style/output_utils.csv *)
 
 (* style dataset -> https://universe.roboflow.com/eric-xiong/art-styles-fuowh/dataset/3 *)
 
 (* Global hash table to store embeddings *)
 let embeddings_cache : (string, Embedding.t) Hashtbl.t = Hashtbl.create (module String)
-
-
-(* Function to generate an embedding from a string *)
-let generate_embedding description =
-  let uri = Uri.of_string "https://api.openai.com/v1/embeddings" in
-
-  let headers = Header.init ()
-    |> fun h -> Header.add h "Authorization" "Bearer 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"
-    |> fun h -> Header.add h "Content-Type" "application/json"
-  in
-
-  let json_body = `Assoc [
-    ("input", `String description);
-    ("model", `String "text-embedding-ada-002");
-    ("encoding_format", `String "float")
-  ] |> Yojson.Basic.to_string
-  in
-
-  Client.post ~body:(Cohttp_lwt.Body.of_string json_body) ~headers uri
-    >>= fun (_resp, body) ->
-    body |> Cohttp_lwt.Body.to_string >|= fun body_str ->
-    (* Parse the response to extract the embedding *)
-    let embedding_json = Yojson.Basic.from_string body_str in
-  
-    let embedding_list = Yojson.Basic.Util.(embedding_json 
-    |> member "data" 
-    |> to_list 
-    |> List.hd_exn
-    |> member "embedding"
-    |> to_list
-    |> List.map ~f:to_float) in
-
-    Embedding.of_list embedding_list
-
-
-(* Synchronous wrapper for `generate_embedding` *)
-let get_embedding_sync description =
-  Lwt_main.run (generate_embedding description)
-
 
 let process_row row =
   let filename = List.hd_exn row in
@@ -62,7 +22,7 @@ let process_row row =
     match Hashtbl.find embeddings_cache description with
     | Some emb -> emb
     | None ->
-      let new_embedding = get_embedding_sync description in
+      let new_embedding = Embedding.get_embedding_sync description in
       Hashtbl.set embeddings_cache ~key:description ~data:new_embedding;
       new_embedding
   in

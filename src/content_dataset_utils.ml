@@ -1,28 +1,7 @@
-open Lwt
-open Cohttp
 open Yojson.Basic
 open Yojson.Basic.Util
-open Cohttp_lwt_unix
 
-(* TODO - convert the image paths to relative path (i.e., not just filename) *)
-
-(* Method to delete a field from a JSON object *)
-(* let delete_field json field_name =
-  let json_assoc = to_assoc json in
-  let filtered_assoc = List.filter (fun (key, _) -> Core.String.(<>) key field_name) json_assoc in
-  `Assoc filtered_assoc *)
-
-
-(* Method to process the JSON file *)
-(* let process_json input_path output_path =
-  let json = from_file input_path in
-  let filtered_json = delete_field (delete_field json "info") "licenses" in
-  to_file output_path filtered_json *)
-
-
-(* Helper function to build the final JSON object *)
-(* let build_final_json images annotations =
-  `Assoc [("images", `List images); ("annotations", `List annotations)] *)
+(* dune exec -- ./content_dataset_utils.exe ./data/content/labels_raw.json ./data/content/output_utils.csv -n 100 *)
 
 
 (* Filter annotations based on selected image IDs *)
@@ -46,45 +25,6 @@ let select_first_n_images json n =
   | _ -> failwith "Invalid JSON format"
 
 
-(* Function to generate an embedding from a string *)
-let generate_embedding description =
-  Core.(
-  let uri = Uri.of_string "https://api.openai.com/v1/embeddings" in
-
-  let headers = Header.init ()
-    |> fun h -> Header.add h "Authorization" "Bearer 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"
-    |> fun h -> Header.add h "Content-Type" "application/json"
-  in
-
-  let json_body = `Assoc [
-    ("input", `String description);
-    ("model", `String "text-embedding-ada-002");
-    ("encoding_format", `String "float")
-  ] |> Yojson.Basic.to_string
-  in
-
-  Client.post ~body:(Cohttp_lwt.Body.of_string json_body) ~headers uri
-    >>= fun (_resp, body) ->
-    body |> Cohttp_lwt.Body.to_string >|= fun body_str ->
-    (* Parse the response to extract the embedding *)
-    let embedding_json = from_string body_str in
-  
-    let embedding_list = embedding_json 
-    |> member "data" 
-    |> to_list 
-    |> List.hd_exn
-    |> member "embedding"
-    |> to_list
-    |> List.map ~f:to_float in
-
-    Embedding.of_list embedding_list)
-
-
-(* Synchronous wrapper for `generate_embedding` *)
-let get_embedding_sync description =
-  Lwt_main.run (generate_embedding description)
-
-
 (* Process data for CSV *)
 let process_data_for_csv images annotations =
   List.map (fun image ->
@@ -96,16 +36,18 @@ let process_data_for_csv images annotations =
       |> List.map (fun ann -> ann |> member "caption" |> to_string)
       |> Core.String.concat ~sep:" " in
 
-    let embedding = get_embedding_sync description in
+    let embedding = Embedding.get_embedding_sync description in
     let embedding_as_list = Embedding.to_list embedding in
     let embedding_string = Core.("[" ^ String.concat ~sep:", " (List.map embedding_as_list ~f:Float.to_string) ^ "]") in
-    [filename; description; "\"" ^ embedding_string ^ "\""]
+    (* Make sure things are surrounded by quotes *)
+    [filename; "\"" ^ description ^ "\""; "\"" ^ embedding_string ^ "\""]
+
   ) images
 
 
 (* Function to write data to a CSV file *)
 let write_to_csv data output_path =
-  Core.(let csv_data = List.map data ~f:(String.concat ~sep:", ") in
+  Core.(let csv_data = List.map data ~f:(String.concat ~sep:",") in
   let csv_string = String.concat ~sep:"\n" csv_data in
   Out_channel.write_all output_path ~data:csv_string)
 

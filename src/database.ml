@@ -8,9 +8,17 @@ Optional:
 - style-csv: path to the csv file for style images 
 
 sample run command:
-dune exec ./database.exe -- --database "host=localhost port=5432 user=postgres password=postgres dbname=style_transfer" --clear --seed --content-csv "content.csv" --style-csv "style.csv"
+dune exec ./database.exe -- --database "host=localhost port=5432 user=postgres password=12345678 dbname=nst" --clear --seed --content-csv "content.csv" --style-csv "style.csv"
 
 We are using pgAdmin to view/verify the db. *)
+
+
+(* Commands to setup db
+- docker volume create postgres-data
+- docker run --name postgres-container -e POSTGRES_PASSWORD=<password> -p 5432:5432 -v postgres-data:/var/lib/postgresql/data -d postgres
+- docker exec -it postgres-container psql -U postgres
+- CREATE DATABASE mydatabase; *)
+
 
 open Postgresql
 
@@ -24,63 +32,9 @@ let clear_tables (c : connection) (table_names : string list) : unit =
 
 (* Function to create tables *)
 let create_tables (c : connection) : unit =
-  let _ = c#exec "CREATE TABLE IF NOT EXISTS style (image bytea, description text, embedding float[])" in
-  let _ = c#exec "CREATE TABLE IF NOT EXISTS content (image bytea, description text, embedding float[])" in
+  let _ = c#exec "CREATE TABLE IF NOT EXISTS style (image text, description text, embedding float[])" in
+  let _ = c#exec "CREATE TABLE IF NOT EXISTS content (image text, description text, embedding float[])" in
   Printf.printf "Created tables: style, content\n"
-
-
-(* Helper function to read a file into a string *)
-let file_to_string filename =
-  let ic = open_in_bin filename in
-  let n = in_channel_length ic in
-  let s = Bytes.create n in
-  really_input ic s 0 n;
-  Stdlib.close_in ic;
-  s
-
-
-(* Helper function to convert image file to blob *)
-let image_to_blob path =
-  let binary_content = file_to_string path in
-  Base64.encode_exn (Bytes.to_string binary_content)
-
-
-(* Helper function to split a string by a delimiter *)
-let split_string ~delimiter str =
-  let rec aux acc i =
-    try
-      let j = String.index_from str i delimiter in
-      aux (String.sub str i (j - i) :: acc) (j + 1)
-    with
-      | Not_found -> List.rev (String.sub str i (String.length str - i) :: acc)
-  in
-  aux [] 0
-
-
-(* Helper function to trim whitespace from a string *)
-let trim str =
-  let open String in
-  let is_space = function
-    | ' ' | '\n' | '\r' | '\t' -> true
-    | _ -> false
-  in
-  let len = length str in
-  let i = ref 0 in
-  while !i < len && is_space (unsafe_get str !i) do
-    incr i
-  done;
-  let j = ref (len - 1) in
-  while !j >= !i && is_space (unsafe_get str !j) do
-    decr j
-  done;
-  sub str !i (!j - !i + 1)
-
-
-(* Function to parse embedding string to float list *)
-let parse_embedding (embedding_str : string) : float list =
-  let trimmed_str = String.sub embedding_str 1 (String.length embedding_str - 2) in
-  let string_list = split_string ~delimiter:',' trimmed_str in
-  List.map (fun s -> float_of_string (trim s)) string_list
 
 
 (* Helper function to convert a float list to a PostgreSQL array string *)
@@ -97,9 +51,9 @@ let seed (c :connection) (content_csv : string) (style_csv : string) : unit =
   let insert_data table csv_file =
     let rows = Csv.load csv_file in
     List.iter (fun row ->
-      let image_blob = image_to_blob (List.nth row 0) in
+      let image_blob = "./data/" ^ table ^ "/images/" ^ (List.nth row 0) |> Image_utils.image_to_blob in
       let description = List.nth row 1 in
-      let embedding = parse_embedding (List.nth row 2) in
+      let embedding = Embedding.parse_embedding (List.nth row 2) in
       let embedding_str = float_list_to_pg_array embedding in
       let query = Printf.sprintf "INSERT INTO %s (image, description, embedding) VALUES ('%s', '%s', '%s')" table image_blob description embedding_str in
       ignore (c#exec query);
