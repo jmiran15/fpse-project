@@ -9,9 +9,6 @@ type flags = {
   total_steps : int;
   layers_style_loss : int list;
   layers_content_loss : int list;
-  k : int;
-  sigma : float;
-  size : float;
 }
 
 let flags =
@@ -21,9 +18,6 @@ let flags =
     total_steps = 30;
     layers_content_loss = [21];
     layers_style_loss = [2; 10; 14; 21; 28];
-    k = 5;
-    sigma = 1.2;
-    size = 0.5;
   }
 
 let get_inputs_tensors
@@ -40,6 +34,8 @@ let get_inputs_tensors
   let content_img = load_content_img content_img_path cpu in
   (model, style_img, content_img)
 
+
+[@@@coverage off]
 let training_nst
     model
     generated_img

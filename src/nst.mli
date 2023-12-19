@@ -4,9 +4,6 @@ type flags = {
   total_steps : int;
   layers_style_loss : int list;
   layers_content_loss : int list;
-  k : int;
-  sigma : float;
-  size : float;
 }
 
 val get_inputs_tensors :

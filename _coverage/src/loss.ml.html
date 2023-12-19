@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>loss.ml &mdash; Coverage report</title>
+    <meta name="description" content="100.00% coverage in src/loss.ml">
+    <link rel="stylesheet" href="../coverage.css"/>
+    <script src="../highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <div id="header">
+      <h1>
+        <a href="../index.html">
+          <span class="dirname">src/</span>loss.ml
+        </a>
+      </h1>
+      <h2>100.00%</h2>
+    </div>
+    <div id="navbar">
+    </div>
+    <div id="report">
+      <div id="lines-layer">
+        <pre>
+<a id="L1"></a><span > </span>
+<a id="L2"></a><span > </span>
+<a id="L3"></a><span > </span>
+<a id="L4"></a><span class="visited"> </span>
+<a id="L5"></a><span class="visited"> </span>
+<a id="L6"></a><span class="visited"> </span>
+<a id="L7"></a><span class="visited"> </span>
+<a id="L8"></a><span > </span>
+<a id="L9"></a><span > </span>
+<a id="L10"></a><span class="visited"> </span>
+<a id="L11"></a><span class="visited"> </span>
+<a id="L12"></a><span > </span>
+<a id="L13"></a><span > </span>
+<a id="L14"></a><span class="visited"> </span>
+<a id="L15"></a><span class="visited"> </span>
+<a id="L16"></a><span class="visited"> </span>
+<a id="L17"></a><span > </span>
+<a id="L18"></a><span > </span>
+<a id="L19"></a><span class="visited"> </span>
+<a id="L20"></a><span > </span>
+<a id="L21"></a><span > </span>
+<a id="L22"></a><span class="visited"> </span>
+<a id="L23"></a><span class="visited"> </span>
+<a id="L24"></a><span class="visited"> </span>
+<a id="L25"></a><span class="visited"> </span>
+<a id="L26"></a><span > </span>
+<a id="L27"></a><span > </span>
+<a id="L28"></a><span class="visited"> </span>
+<a id="L29"></a><span > </span>
+<a id="L30"></a><span > </span>
+<a id="L31"></a><span class="visited"> </span>
+</pre>
+      </div>
+      <div id="text-layer">
+        <pre id="line-numbers">
+<a href="#L1"> 1</a>
+<a href="#L2"> 2</a>
+<a href="#L3"> 3</a>
+<a href="#L4"> 4</a>
+<a href="#L5"> 5</a>
+<a href="#L6"> 6</a>
+<a href="#L7"> 7</a>
+<a href="#L8"> 8</a>
+<a href="#L9"> 9</a>
+<a href="#L10">10</a>
+<a href="#L11">11</a>
+<a href="#L12">12</a>
+<a href="#L13">13</a>
+<a href="#L14">14</a>
+<a href="#L15">15</a>
+<a href="#L16">16</a>
+<a href="#L17">17</a>
+<a href="#L18">18</a>
+<a href="#L19">19</a>
+<a href="#L20">20</a>
+<a href="#L21">21</a>
+<a href="#L22">22</a>
+<a href="#L23">23</a>
+<a href="#L24">24</a>
+<a href="#L25">25</a>
+<a href="#L26">26</a>
+<a href="#L27">27</a>
+<a href="#L28">28</a>
+<a href="#L29">29</a>
+<a href="#L30">30</a>
+<a href="#L31">31</a>
+</pre>
+<pre><code class="ocaml">open Torch
+
+let gram_matrix m =
+  <span data-count="11">l</span>et a, b, c, d = Tensor.shape4_exn m in
+  <span data-count="11">l</span>et m = Tensor.view m ~size:[ a * b; c * d ] in
+  <span data-count="11">l</span>et g = Tensor.mm m (Tensor.t<span data-count="11">r</span> m) in
+  <span data-count="11">T</span>ensor.( / ) g (Float.of_int (a * b * c * d) |&gt; <span data-count="11">T</span>ensor.<span data-count="11">f</span>)
+
+let get_style_loss input_layers style_layers layers_for_loss =
+  <span data-count="1">l</span>et style_loss m1 m2 =
+    <span data-count="5">T</span>ensor.mse_loss (gram_matri<span data-count="5">x</span> m1) (gram_matri<span data-count="5">x</span> m2)
+  in
+  let loss_new_layers lst =
+    <span data-count="5">s</span>tyle_loss
+      (Base.Map.find_ex<span data-count="5">n</span> input_layers lst)
+      (Base.Map.find_ex<span data-count="5">n</span> style_layers lst)
+  in
+  List.(map loss_new_layers layers_for_loss
+  |&gt; <span data-count="1">f</span>old_left Tensor.( + ) (Tensor.of_float<span data-count="1">0</span> 0.0))
+
+let get_content_loss input_layers content_layers layers_for_loss =
+  <span data-count="1">l</span>et loss_new_layers lst =
+    <span data-count="1">T</span>ensor.mse_loss
+      (Base.Map.find_ex<span data-count="1">n</span> input_layers lst)
+      (Base.Map.find_ex<span data-count="1">n</span> content_layers lst)
+  in
+  List.(map loss_new_layers layers_for_loss 
+  |&gt; <span data-count="1">f</span>old_left Tensor.( + ) (Tensor.of_float<span data-count="1">0</span> 0.0))
+
+let get_combined_loss style_loss style_weight content_loss =
+  <span data-count="1">T</span>ensor.((style_loss * <span data-count="1">f</span> style_weight) + content_loss)
+</code></pre>
+      </div>
+    </div>
+    <script src="../coverage.js"></script>
+  </body>
+</html>

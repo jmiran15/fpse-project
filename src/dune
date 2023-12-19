@@ -1,91 +1,81 @@
-; (library
-;  (name nst_video)
-;  (modules nst_video)
-;  (libraries nst ffmpeg)
-;  (preprocess
-;   (pps bisect_ppx)))
+(library
+(name nst_video)
+(modules nst_video)
+(libraries nst ffmpeg)
+(preprocess
+(pps bisect_ppx)))
 
 (executable
-  (name content_dataset_utils)
-  (modules content_dataset_utils)
-  (libraries
-    core 
-    core_unix.filename_unix
-    core_unix.command_unix
-    yojson
-    embedding)
-  (preprocess (pps ppx_let)))
-
+ (name content_dataset_utils)
+ (modules content_dataset_utils)
+ (libraries
+  core
+  core_unix.filename_unix
+  core_unix.command_unix
+  yojson
+  embedding)
+ (preprocess
+  (pps ppx_let)))
 
 (executables
-  (names database)
-  (modules database)
-  (libraries 
-    postgresql 
-    csv 
-    embedding 
-    base64
-    core 
-    core_unix
-    core_unix.command_unix
-    image_utils)
-  (preprocess (pps ppx_let)))
-
-
-(library
-  (name embedding)
-  (modules embedding)
-  (libraries 
-    cohttp
-    cohttp-lwt-unix 
-    lwt
-    core 
-    yojson))
-
-(executable
-  (name server)
-  (modules server)
-  (libraries 
-    nst
-    core 
-    core_unix.command_unix
-    core_unix 
-    dream 
-    postgresql
-    lwt
-    lwt.unix
-    base64
-    embedding
-    image_utils
-    yojson)
-  (preprocess (pps ppx_let lwt_ppx)))
-
-
-(executable
-  (name style_dataset_utils)
-  (modules style_dataset_utils)
-  (libraries
-    core 
-    core_unix.command_unix
-    csv
-    embedding)
-  (preprocess (pps ppx_let)))
-
+ (names database)
+ (modules database)
+ (libraries
+  postgresql
+  csv
+  embedding
+  base64
+  core
+  core_unix
+  core_unix.command_unix
+  image_utils)
+ (preprocess
+  (pps ppx_let)))
 
 (library
-  (name image_utils)
-  (modules image_utils)
-  (libraries 
-    base64
-    core))
+ (name embedding)
+ (modules embedding)
+ (libraries cohttp cohttp-lwt-unix lwt core yojson)
+ (preprocess
+  (pps bisect_ppx)))
 
+(executable
+ (name server)
+ (modules server)
+ (libraries
+  nst
+  core
+  core_unix.command_unix
+  core_unix
+  dream
+  postgresql
+  lwt
+  lwt.unix
+  base64
+  embedding
+  image_utils
+  yojson)
+ (preprocess
+  (pps ppx_let lwt_ppx)))
+
+(executable
+ (name style_dataset_utils)
+ (modules style_dataset_utils)
+ (libraries core core_unix.command_unix csv embedding)
+ (preprocess
+  (pps ppx_let)))
+
+(library
+ (name image_utils)
+ (modules image_utils)
+ (libraries base64 core)
+ (preprocess
+  (pps bisect_ppx)))
 
 (library
  (name vgg_custom)
  (modules vgg_custom)
- (libraries base torch)
- (preprocess
-  (pps bisect_ppx)))
+ (libraries base torch))
 
 (library
  (name loader)
