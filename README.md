@@ -32,6 +32,8 @@ Build the entire project at the root by running ```dune clean``` and ```dune bui
   ```dune exec -- ./content_dataset_utils.exe ./data/content/labels_raw.json ./data/content/output_utils.csv -n 100``` and
   ```dune exec ./style_dataset_utils.exe ./data/style/style_labels.csv ./data/style/output_utils.csv```
   to generate the content and style output_utils.csv files to be used in ```src/database.ml```.
+* In ```src/data/content``` unzip and add ```images``` that can be downloaded here: https://drive.google.com/file/d/1PvoVV3cZDQswl5BbYaxdVD2yGYdb1TNl/view?usp=drive_link to properly use ```content_dataset_utils.ml```
+  Also unzip ```src/data/style/images.zip``` to use in ```style_dataset_utils.ml```.
 * Run
   ```dune exec ./database.exe -- --database "host=localhost port=5432 user=postgres password=12345678 dbname=nst" --clear --seed --content-csv "content.csv" --style-csv "style.csv"```
   to run database executable.
