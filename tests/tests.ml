@@ -29,7 +29,7 @@ let test_file_to_string _ =
   Sys.remove filename
 
 let test_image_to_blob _ =
-  let path = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/20fen.jpg" in
+  let path = "./sample_inputs/20fen.jpg" in
   let _ = Image_utils.image_to_blob path in
   ()
 
@@ -42,7 +42,7 @@ let test_write_binary_to_file _ =
   Sys.remove filename
 
 let test_with_temp_image_file _ =
-  let path = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/20fen.jpg" in
+  let path = "./sample_inputs/20fen.jpg" in
   let base64_string = Image_utils.image_to_blob path in
   let result = Image_utils.with_temp_image_file base64_string (fun _ -> "test") in
   assert_equal (Some "test") result;
@@ -55,7 +55,7 @@ let test_with_temp_image_file _ =
 let test_load_vgg_model _ =
   (* testing that they don't result in an error *)
   let vgg_name = "vgg19" in
-  let load_weight_path = "/home/ooludip1/Fpse/project/fpse-project/src/vgg19.ot" in
+  let load_weight_path = "./vgg19.ot" in
   let style_layers = [2; 10; 14; 21; 28] in
   let content_layers = [21] in
   let cpu = Torch.Device.cuda_if_available () in
@@ -64,7 +64,7 @@ let test_load_vgg_model _ =
 
 (* Test for load_style_img function *)
 let test_load_style_img _ =
-  let style_img = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/style-cubist.jpg" in
+  let style_img = "./sample_inputs/style-cubist.jpg" in
   let cpu = Torch.Device.cuda_if_available () in
   let style = Loader.load_style_img style_img cpu in
   let expected = Torch_vision.Image.load_image style_img |> Base.Or_error.ok_exn in
@@ -72,7 +72,7 @@ let test_load_style_img _ =
 
 (* Test for load_content_img function *)
 let test_load_content_img _ =
-  let content_img = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/new-york.jpg" in
+  let content_img = "./sample_inputs/new-york.jpg" in
   let cpu = Torch.Device.cuda_if_available () in
   let content = Loader.load_content_img content_img cpu in
   let expected = Torch_vision.Image.load_image content_img |> Base.Or_error.ok_exn in
@@ -86,9 +86,9 @@ assert_equal (Torch.Tensor.shape gm) [4; 4]
 
 let test_style_loss _= 
 let vgg_name = "vgg19" in
-let load_weight_path = "/home/ooludip1/Fpse/project/fpse-project/src/vgg19.ot" in
-let style = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/style-cubist.jpg" in
-let content = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/new-york.jpg" in
+let load_weight_path = "./vgg19.ot" in
+let style = "./sample_inputs/style-cubist.jpg" in
+let content = "./sample_inputs/new-york.jpg" in
 let cpu = Torch.Device.cuda_if_available () in
 let model, style_img, content_img = Nst.get_inputs_tensors vgg_name cpu style content load_weight_path in
 let model_paras = Torch.Var_store.create ~name:"optim" ~device:cpu () in
@@ -105,9 +105,9 @@ assert_equal expected result;;
 
 let test_content_loss _= 
 let vgg_name = "vgg19" in
-let load_weight_path = "/home/ooludip1/Fpse/project/fpse-project/src/vgg19.ot" in
-let style = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/style-cubist.jpg" in
-let content = "/home/ooludip1/Fpse/project/fpse-project/sample_inputs/new-york.jpg" in
+let load_weight_path = "./vgg19.ot" in
+let style = "./sample_inputs/style-cubist.jpg" in
+let content = "./sample_inputs/new-york.jpg" in
 let cpu = Torch.Device.cuda_if_available () in
 let model, style_img, content_img = Nst.get_inputs_tensors vgg_name cpu style content load_weight_path in
 let model_paras = Torch.Var_store.create ~name:"optim" ~device:cpu () in

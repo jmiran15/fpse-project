@@ -41,7 +41,7 @@ let calculate_similarities rows query_embedding =
   
 let use_images style_path content_path =
   let open Sys in
-  let model = "./models/vgg19.ot" in
+  let model = "./vgg19.ot" in
   let output_path = "output.png" in
   Nst.main "vgg19" style_path content_path model output_path;
 

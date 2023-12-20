@@ -77,6 +77,8 @@ let training_nst
         ~filename:(Printf.sprintf "GIF_tmp/gif%04d.png" img_idx)
   done
 
+(*Sample input: main "vgg19" "style.jpg" "contene.jpg" "./vgg19.ot" "output.jpg"*)
+
 let main model_name style content model output =
   let cpu = Device.cuda_if_available () in
   let model, style_img, content_img =
